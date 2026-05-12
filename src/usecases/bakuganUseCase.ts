@@ -1,73 +1,121 @@
-const { pool } = require('../config');
-const Bakugan = require('../entities/bakugan');
+import { BakuganGet, BakuganPost } from "../types/bakuganReponse";
+import { Bakugan } from "../entities/bakugan";
 
-const getBakugansDB = async () => {
-    try {
-        const { rows } = await pool.query('SELECT * FROM bakugans ORDER BY nome');
-        return rows.map((bakugan) => new Bakugan(bakugan.id, bakugan.nome));
-    } catch (error : unknown) {
-        throw '[ERRO!]: ' + error;
+import pool from "../../config";
+
+const getBakuganDB = async () => {
+  try {
+    const { rows } = await pool.query("SELECT * FROM bakugan ORDER BY nome");
+    return rows.map(
+      (bakugan: BakuganGet) =>
+        new Bakugan(bakugan.id, bakugan.nome, bakugan.atributo, bakugan.poder),
+    );
+  } catch (error: unknown) {
+    throw "[ERRO!]: " + error;
+  }
+};
+
+const addBakuganDB = async (body: BakuganPost) => {
+  try {
+    const { nome, atributo, poder } = body;
+    const results = await pool.query(
+      `INSERT INTO bakugan (nome, atributo, poder) VALUES ($1, $2, $3) RETURNING id, nome, atributo, poder`,
+      [nome, atributo, poder],
+    );
+    const bakugan = results.rows[0];
+    return new Bakugan(
+      bakugan.id,
+      bakugan.nome,
+      bakugan.atributo,
+      bakugan.poder,
+    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw "[ERRO!] Inserir bakugan: " + error;
     }
-}
+    throw "[ERRO!] Inserir bakugan: " + error;
+  }
+};
 
-const addBakuganDB = async (body) => {
-    try {
-        const { nome, email } = body;
-        const results = await pool.query(`INSERT INTO bakugans (nome, email) VALUES ($1, $2) RETURNING id, nome`, [nome]);
-        const bakugan = results.rows[0];
-        return new bakugan(bakugan.id, bakugan.nome, bakugan.email);
-    } catch (error : unknown) {
-         if (error instanceof Error) {
-        throw '[ERRO!] Inserir bakugan: ' + error;
-         }
+const updateBakuganDB = async (body: BakuganGet) => {
+  try {
+    const { id, nome, atributo, poder } = body;
+
+    const results = await pool.query(
+      `UPDATE bakugan
+       SET nome = $1,
+           atributo = $2,
+           poder = $3
+       WHERE id = $4
+       RETURNING *`,
+      [nome, atributo, poder, id],
+    );
+
+    if (results.rowCount == 0) {
+      throw new Error(`Nenhum registro encontrado com o ID ${id}!`);
     }
-}
 
-const updateBakuganDB = async (body) => {
-    try {
-        const { id, nome, email } = body;
-        const results = await pool.query(`UPDATE bakugans SET nome = $1 WHERE id = $3`, [nome]);
-        if (results.rowCount == 0) {
-            throw `Nenhum registro encontrado com o ID ${id}!`;
-        }
-        const bakugan = results.rows[0];
-        return new bakugan(bakugan.id, bakugan.nome, bakugan.email);
-    } catch (error : unknown) {
-        if (error instanceof Error) {
-        throw '[ERRO!] Inserir bakugan: ' + error;
-         }
+    const bakugan = results.rows[0];
+
+    return new Bakugan(
+      bakugan.id,
+      bakugan.nome,
+      bakugan.atributo,
+      bakugan.poder,
+    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error("[ERRO!] Atualizar bakugan: " + error.message);
     }
-}
 
-const deleteBakuganDB = async (id : number) => {
-    try {
-        const results = await pool.query(`DELETE FROM bakugans WHERE id = $1`, [id]);
-        if (results.rowCount == 0) {
-            throw `Nenhum registro encontrado com o ID ${id}!`;
-        } else {
-            return 'bakugan removido com sucesso!'
-        }
-    } catch (error : unknown) {
-         if (error instanceof Error) {
-        throw '[ERRO!] Inserir bakugan: ' + error;
-         }
+    throw new Error("[ERRO!] Atualizar bakugan");
+  }
+};
+
+const deleteBakuganDB = async (id: number) => {
+  try {
+    const results = await pool.query(`DELETE FROM bakugan WHERE id = $1`, [id]);
+    if (results.rowCount == 0) {
+      throw `Nenhum registro encontrado com o ID ${id}!`;
+    } else {
+      return "bakugan removido com sucesso!";
     }
-}
-
-const getbakuganPorIdDB = async (id : number) => {
-    try {
-        const results = await pool.query(`SELECT * FROM bakugans WHERE id = $1`, [id]);
-        if (results.rowCount == 0) {
-            throw `Nenhum registro encontrado com o ID ${id}!`;
-        } else {
-            const bakugan = results.rows[0];
-            return new Bakugan(bakugan.id, bakugan.nome, bakugan.email);
-        }
-    } catch (error : unknown) {
-       if (error instanceof Error) {
-        throw '[ERRO!] Inserir bakugan: ' + error;
-         }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw "[ERRO!] Inserir bakugan: " + error;
     }
-}
+    throw new Error("[ERRO!] Remover bakugan");
+  }
+};
 
-module.exports = { getBakugansDB, addBakuganDB, updateBakuganDB, deleteBakuganDB, getbakuganPorIdDB };
+const getBakuganPorIdDB = async (id: number) => {
+  try {
+    const results = await pool.query(`SELECT * FROM bakugan WHERE id = $1`, [
+      id,
+    ]);
+    if (results.rowCount == 0) {
+      throw `Nenhum registro encontrado com o ID ${id}!`;
+    } else {
+      const bakugan = results.rows[0];
+      return new Bakugan(
+        bakugan.id,
+        bakugan.nome,
+        bakugan.atributo,
+        bakugan.poder,
+      );
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw "[ERRO!] Inserir bakugan: " + error;
+    }
+    throw new Error("[ERRO!] Remover bakugan");
+  }
+};
+
+export {
+  getBakuganDB,
+  addBakuganDB,
+  updateBakuganDB,
+  deleteBakuganDB,
+  getBakuganPorIdDB,
+};

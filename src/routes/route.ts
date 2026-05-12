@@ -1,10 +1,8 @@
-const { Router } = require('express');
-const { bakuganRoutes } = require('./routeBakugan');
+import { Router } from "express";
+import bakuganRoutes from "./routeBakugan";
 
-
-const routes = new Router();
+const routes = Router();
 
 routes.use(bakuganRoutes);
 
-
-module.exports = routes;
+export default routes;

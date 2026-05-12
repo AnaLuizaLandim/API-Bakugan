@@ -1,16 +1,21 @@
-const { Router } = require('express');
+import { Router } from "express";
 
-const { getBakugan, addBakugan, updateBakugan, deleteBakugan, getBakuganPorId } = require('../controllers/Bakuganontroller');
+const {
+  getBakugan,
+  addBakugan,
+  updateBakugan,
+  deleteBakugan,
+  getBakuganPorId,
+} = require("../controllers/bakuganController");
 
-const bakuganRoutes = new Router();
+const bakuganRoutes = Router();
 
-bakuganRoutes.route('/bakugan')
-    .get(getBakugan)
-    .post(addBakugan)
-    .put(updateBakugan)
+bakuganRoutes
+  .route("/bakugan")
+  .get(getBakugan)
+  .post(addBakugan)
+  .put(updateBakugan);
 
-bakuganRoutes.route('/bakugan/:id')
-    .get(getBakuganPorId)
-    .delete(deleteBakugan)
+bakuganRoutes.route("/bakugan/:id").get(getBakuganPorId).delete(deleteBakugan);
 
-module.exports = { bakuganRoutes };
+export default bakuganRoutes;
