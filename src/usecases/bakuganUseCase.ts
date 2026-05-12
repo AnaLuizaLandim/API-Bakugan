@@ -5,7 +5,7 @@ const getBakugansDB = async () => {
     try {
         const { rows } = await pool.query('SELECT * FROM bakugans ORDER BY nome');
         return rows.map((bakugan) => new Bakugan(bakugan.id, bakugan.nome));
-    } catch (error) {
+    } catch (error : unknown) {
         throw '[ERRO!]: ' + error;
     }
 }
@@ -16,8 +16,10 @@ const addBakuganDB = async (body) => {
         const results = await pool.query(`INSERT INTO bakugans (nome, email) VALUES ($1, $2) RETURNING id, nome`, [nome]);
         const bakugan = results.rows[0];
         return new bakugan(bakugan.id, bakugan.nome, bakugan.email);
-    } catch (error) {
+    } catch (error : unknown) {
+         if (error instanceof Error) {
         throw '[ERRO!] Inserir bakugan: ' + error;
+         }
     }
 }
 
@@ -30,12 +32,14 @@ const updateBakuganDB = async (body) => {
         }
         const bakugan = results.rows[0];
         return new bakugan(bakugan.id, bakugan.nome, bakugan.email);
-    } catch (error) {
-        throw '[ERRO!] Atualizar bakugan: ' + error;
+    } catch (error : unknown) {
+        if (error instanceof Error) {
+        throw '[ERRO!] Inserir bakugan: ' + error;
+         }
     }
 }
 
-const deleteBakuganDB = async (id) => {
+const deleteBakuganDB = async (id : number) => {
     try {
         const results = await pool.query(`DELETE FROM bakugans WHERE id = $1`, [id]);
         if (results.rowCount == 0) {
@@ -43,12 +47,14 @@ const deleteBakuganDB = async (id) => {
         } else {
             return 'bakugan removido com sucesso!'
         }
-    } catch (error) {
-        throw '[ERRO!] Remover bakugan: ' + error;
+    } catch (error : unknown) {
+         if (error instanceof Error) {
+        throw '[ERRO!] Inserir bakugan: ' + error;
+         }
     }
 }
 
-const getbakuganPorIdDB = async (id) => {
+const getbakuganPorIdDB = async (id : number) => {
     try {
         const results = await pool.query(`SELECT * FROM bakugans WHERE id = $1`, [id]);
         if (results.rowCount == 0) {
@@ -57,8 +63,10 @@ const getbakuganPorIdDB = async (id) => {
             const bakugan = results.rows[0];
             return new Bakugan(bakugan.id, bakugan.nome, bakugan.email);
         }
-    } catch (error) {
-        throw '[ERRO!]: ' + error;
+    } catch (error : unknown) {
+       if (error instanceof Error) {
+        throw '[ERRO!] Inserir bakugan: ' + error;
+         }
     }
 }
 

@@ -3,7 +3,7 @@ const { getBakuganDB, addBakuganDB, updateBakuganDB, deleteBakuganDB, getBakugan
 const getBakugan = async (request, response) => {
     await getBakuganDB()
         .then(data => response.status(200).json(data))
-        .catch(err => response.status(400).json({
+        .catch((err : unknown) => response.status(400).json({
             status: "error",
             message: err
         }));
@@ -16,20 +16,20 @@ const addBakugan = async (request, response) => {
             message: "Bakugan criado",
             objeto: data
         }))
-        .catch(err => response.status(400).json({
+        .catch((err : unknown) => response.status(400).json({
             status: "error",
             message: err
         }))
 }
 
-const updateBagukan= async (request, response) => {
+const updateBakugan= async (request, response) => {
     await updateBakuganDB(request.body)
         .then(data => response.status(200).json({
             status: "success",
             message: "Bakugan atualizado",
             objeto: data
         }))
-        .catch(err => response.status(400).json({
+        .catch((err : unknown) => response.status(400).json({
             status: "error",
             message: err
         }))
@@ -41,7 +41,7 @@ const deleteBakugan = async (request, response) => {
             status: "success",
             message: data
         }))
-        .catch(err => response.status(400).json({
+        .catch((err : unknown) => response.status(400).json({
             status: "error",
             message: err
         }))
@@ -50,7 +50,7 @@ const deleteBakugan = async (request, response) => {
 const getBakuganPorId = async (request, response) => {
     await getBakuganPorIdDB(request.params.id)
         .then(data => response.status(200).json(data))
-        .catch(err => response.status(400).json({
+        .catch((err : unknown)=> response.status(400).json({
             status: "error",
             message: err
         }))
