@@ -1,15 +1,13 @@
-export class Bakugan {
+export class Habilidades {
   constructor(
     public id: number,
     public nome: string,
-    public atributo: string,
-    public poder: number,
     public descricao: string,
+    public bakugan_id: number,
   ) {
     this.id = id;
     this.nome = nome;
-    this.atributo = atributo;
-    this.poder = poder;
     this.descricao = descricao;
+    this.bakugan_id = bakugan_id;
   }
 }

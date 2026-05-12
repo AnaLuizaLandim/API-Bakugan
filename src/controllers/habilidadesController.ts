@@ -1,17 +1,17 @@
-import { BakuganGet, BakuganPost } from "../types/bakuganReponse";
+import { HabilidadeGet, HabilidadePost } from "../types/habilidadeResponse";
 import { Request, Response } from "express";
 
 import {
-  getBakuganUseCase,
-  addBakuganUseCase,
-  updateBakuganUseCase,
-  deleteBakuganUseCase,
-  getBakuganPorIdUseCase,
-} from "../usecases/bakuganUseCase";
+  getHabilidadesUseCase,
+  addHabilidadeUseCase,
+  updateHabilidadeUseCase,
+  deleteHabilidadeUseCase,
+  getHabilidadePorIdUseCase,
+} from "../usecases/habilidadesUseCase";
 
-const getBakugan = async (request: Request, response: Response) => {
+const getHabilidade = async (request: Request, response: Response) => {
   try {
-    const data: BakuganGet[] = await getBakuganUseCase();
+    const data: HabilidadeGet[] = await getHabilidadesUseCase();
 
     return response.status(200).json(data);
   } catch (err: unknown) {
@@ -22,13 +22,13 @@ const getBakugan = async (request: Request, response: Response) => {
   }
 };
 
-const addBakugan = async (request: Request, response: Response) => {
+const addHabilidade = async (request: Request, response: Response) => {
   console.log(request.body);
-  await addBakuganUseCase(request.body)
-    .then((data: BakuganGet) =>
+  await addHabilidadeUseCase(request.body)
+    .then((data: HabilidadeGet) =>
       response.status(201).json({
         status: "success",
-        message: "Bakugan criado",
+        message: "Habilidade criado",
         objeto: data,
       }),
     )
@@ -40,12 +40,12 @@ const addBakugan = async (request: Request, response: Response) => {
     );
 };
 
-const updateBakugan = async (request: Request, response: Response) => {
-  await updateBakuganUseCase(request.body)
-    .then((data: BakuganPost) =>
+const updateHabilidade = async (request: Request, response: Response) => {
+  await updateHabilidadeUseCase(request.body)
+    .then((data: HabilidadePost) =>
       response.status(200).json({
         status: "success",
-        message: "Bakugan atualizado",
+        message: "Habilidade atualizado",
         objeto: data,
       }),
     )
@@ -57,9 +57,9 @@ const updateBakugan = async (request: Request, response: Response) => {
     );
 };
 
-const deleteBakugan = async (request: Request, response: Response) => {
+const deleteHabilidade = async (request: Request, response: Response) => {
   const id = Number(request.params.id);
-  await deleteBakuganUseCase(id)
+  await deleteHabilidadeUseCase(id)
     .then((data: string) =>
       response.status(200).json({
         status: "success",
@@ -74,10 +74,10 @@ const deleteBakugan = async (request: Request, response: Response) => {
     );
 };
 
-const getBakuganPorId = async (request: Request, response: Response) => {
+const getHabilidadePorId = async (request: Request, response: Response) => {
   const id = Number(request.params.id);
-  await getBakuganPorIdUseCase(id)
-    .then((data: BakuganGet) => response.status(200).json(data))
+  await getHabilidadePorIdUseCase(id)
+    .then((data: HabilidadeGet) => response.status(200).json(data))
     .catch((err: unknown) =>
       response.status(400).json({
         status: "error",
@@ -87,9 +87,9 @@ const getBakuganPorId = async (request: Request, response: Response) => {
 };
 
 export {
-  getBakugan,
-  addBakugan,
-  updateBakugan,
-  deleteBakugan,
-  getBakuganPorId,
+  getHabilidade,
+  addHabilidade,
+  updateHabilidade,
+  deleteHabilidade,
+  getHabilidadePorId,
 };

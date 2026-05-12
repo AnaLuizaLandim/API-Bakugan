@@ -3,24 +3,30 @@ import { Bakugan } from "../entities/bakugan";
 
 import pool from "../../config";
 
-const getBakuganDB = async () => {
+const getBakuganUseCase = async () => {
   try {
     const { rows } = await pool.query("SELECT * FROM bakugan ORDER BY nome");
     return rows.map(
       (bakugan: BakuganGet) =>
-        new Bakugan(bakugan.id, bakugan.nome, bakugan.atributo, bakugan.poder),
+        new Bakugan(
+          bakugan.id,
+          bakugan.nome,
+          bakugan.atributo,
+          bakugan.poder,
+          bakugan.descricao,
+        ),
     );
   } catch (error: unknown) {
     throw "[ERRO!]: " + error;
   }
 };
 
-const addBakuganDB = async (body: BakuganPost) => {
+const addBakuganUseCase = async (body: BakuganPost) => {
   try {
-    const { nome, atributo, poder } = body;
+    const { nome, atributo, poder, descricao } = body;
     const results = await pool.query(
-      `INSERT INTO bakugan (nome, atributo, poder) VALUES ($1, $2, $3) RETURNING id, nome, atributo, poder`,
-      [nome, atributo, poder],
+      `INSERT INTO bakugan (nome, atributo, poder, descricao) VALUES ($1, $2, $3, $4) RETURNING id, nome, atributo, poder, descricao`,
+      [nome, atributo, poder, descricao],
     );
     const bakugan = results.rows[0];
     return new Bakugan(
@@ -28,6 +34,7 @@ const addBakuganDB = async (body: BakuganPost) => {
       bakugan.nome,
       bakugan.atributo,
       bakugan.poder,
+      bakugan.descricao,
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -37,18 +44,19 @@ const addBakuganDB = async (body: BakuganPost) => {
   }
 };
 
-const updateBakuganDB = async (body: BakuganGet) => {
+const updateBakuganUseCase = async (body: BakuganGet) => {
   try {
-    const { id, nome, atributo, poder } = body;
+    const { id, nome, atributo, poder, descricao } = body;
 
     const results = await pool.query(
       `UPDATE bakugan
        SET nome = $1,
            atributo = $2,
-           poder = $3
+           poder = $3,
+           descricao = $4
        WHERE id = $4
        RETURNING *`,
-      [nome, atributo, poder, id],
+      [nome, atributo, poder, descricao, id],
     );
 
     if (results.rowCount == 0) {
@@ -62,6 +70,7 @@ const updateBakuganDB = async (body: BakuganGet) => {
       bakugan.nome,
       bakugan.atributo,
       bakugan.poder,
+      bakugan.descricao,
     );
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -72,7 +81,7 @@ const updateBakuganDB = async (body: BakuganGet) => {
   }
 };
 
-const deleteBakuganDB = async (id: number) => {
+const deleteBakuganUseCase = async (id: number) => {
   try {
     const results = await pool.query(`DELETE FROM bakugan WHERE id = $1`, [id]);
     if (results.rowCount == 0) {
@@ -88,7 +97,7 @@ const deleteBakuganDB = async (id: number) => {
   }
 };
 
-const getBakuganPorIdDB = async (id: number) => {
+const getBakuganPorIdUseCase = async (id: number) => {
   try {
     const results = await pool.query(`SELECT * FROM bakugan WHERE id = $1`, [
       id,
@@ -102,6 +111,7 @@ const getBakuganPorIdDB = async (id: number) => {
         bakugan.nome,
         bakugan.atributo,
         bakugan.poder,
+        bakugan.descricao,
       );
     }
   } catch (error: unknown) {
@@ -113,9 +123,9 @@ const getBakuganPorIdDB = async (id: number) => {
 };
 
 export {
-  getBakuganDB,
-  addBakuganDB,
-  updateBakuganDB,
-  deleteBakuganDB,
-  getBakuganPorIdDB,
+  getBakuganUseCase,
+  addBakuganUseCase,
+  updateBakuganUseCase,
+  deleteBakuganUseCase,
+  getBakuganPorIdUseCase,
 };

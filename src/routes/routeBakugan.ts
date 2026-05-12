@@ -1,12 +1,12 @@
 import { Router } from "express";
 
-const {
+import {
   getBakugan,
   addBakugan,
   updateBakugan,
   deleteBakugan,
   getBakuganPorId,
-} = require("../controllers/bakuganController");
+} from "../controllers/bakuganController";
 
 const bakuganRoutes = Router();
 
