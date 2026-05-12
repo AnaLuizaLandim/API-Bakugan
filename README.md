@@ -4,3 +4,5 @@ API de bakugan, CRUD bakugans, CRUD habilidades...(futuramente permitirá login)
 Próximos passos:
 Fazer join das habilidades com os bakugans,
 Adicionar o campo imagem no bakugan
+
+## Banco local rodando no docker...
